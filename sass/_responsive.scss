@@ -1,0 +1,91 @@
+@charset "UTF-8";
+
+
+/* ====================== Smartphones, iPhone, portrait 480x320 phones  ====================== */
+@media screen and (max-width: 480px) {
+}
+
+/* ====================== Portrait e-readers (Nook/Kindle), smaller tablets @ 600 or @ 640 wide. ====================== */
+@media screen and (min-width: 481px) {
+  /* ====================== Footer ====================== */
+  footer {
+    span {
+      strong {
+        padding: 1.250em;
+        line-height: 0;
+      }
+    }
+  }
+}
+
+/* ====================== Portrait tablets, portrait iPad, landscape e-readers, landscape 800x480 or 854x480 phones ====================== */
+@media screen and (min-width: 641px) {
+  /* ====================== Navigation ====================== */
+  nav {
+    h1 {
+      a {
+        font-size: 0.95em;
+      }
+    }
+  }
+
+  /* ====================== Restaurant Filtering ====================== */
+  .filter-options {
+    display:flex;
+    flex-flow: row wrap;
+    padding: 1em 0.5em;
+    h2 {
+      flex: 1 100%;
+    }
+    select {
+      flex: 1;
+      max-width: 450px;
+    }
+    #neighborhoods-select {
+      margin-right: 1em;
+    }
+    #cuisines-select {
+      margin-left: 1em;
+      margin-top: 0;
+    }
+  }
+
+  /* ====================== Restaurant Listing ====================== */
+  #restaurants-list {
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 2em;
+  }
+
+}
+
+/* ====================== Tablet, landscape iPad, lo-res laptops ands desktops ====================== */
+@media screen and (min-width: 961px) {
+  /* ====================== Navigation ====================== */
+  nav {
+    h1 {
+      a {
+        font-size: 1.125em;
+      }
+    }
+  }
+
+  /* ====================== Restaurant Listing ====================== */
+  #restaurants-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* ====================== Detail Main content structure ====================== */
+  .wrapper {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-areas: "map         map    "
+  	                     "restaurant  reviews";
+  }
+}
+
+/* ====================== Big landscape tablets, laptops, and desktops ====================== */
+@media screen and (min-width: 1025px) {
+}
+
+/* ====================== Hi-res laptops and desktops ====================== */
+@media screen and (min-width: 1281px) {
+}

@@ -1,0 +1,96 @@
+@charset "UTF-8";
+
+/* ====================== Grid css basic structure ====================== */
+
+body {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+	grid-template-rows: 80px 1fr 65px;
+  grid-gap: 0;
+	grid-template-areas: "header"
+	                     "main"
+	                     "footer";
+  font-family:$f-default;
+  min-height: 100vh;
+  margin:0;
+  font-size: 1.2em;
+  background-color: $cbg-content;
+}
+
+header {
+  grid-area: header;
+  background-color: $cbg-header;
+}
+
+main {
+  grid-area: main;
+  background-color: $cbg-content;
+}
+
+footer {
+  grid-area: footer;
+  background-color: $cbg-footer;
+}
+
+a,
+a:hover,
+a:visited,
+a:link,
+a:focus {
+  text-decoration: none;
+}
+
+/* ====================== Navigation ====================== */
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  h1 {
+    text-align: center;
+    a {
+      color: $cl-header;
+      font-size: 1em;
+      letter-spacing: 0.45em;
+      font-weight: 200;
+      text-transform: uppercase;
+    }
+  }
+}
+
+/* ====================== Map ====================== */
+#map {
+  display: flex;
+  height: 400px;
+  background-color: $cbg-map;
+}
+
+
+/* ====================== Footer ====================== */
+footer {
+  padding: 0.625em 0.2em;
+  span {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    color: $cf-footer;
+    font-size: 0.750em;
+    letter-spacing: 0.1em;
+    height: 100%;
+    strong {
+      padding: 0.625em;
+      line-height: 2em;
+    }
+    a,
+    a:visited,
+    a:link {
+      color: $cl-generic;
+    }
+    a:hover,
+    a:focus {
+      color: $cl-generic-hover;
+    }
+  }
+}

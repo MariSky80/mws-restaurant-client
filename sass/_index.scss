@@ -1,0 +1,100 @@
+@charset "UTF-8";
+
+/* ====================== Restaurant Filtering ====================== */
+.filter-options {
+  display:flex;
+  flex-flow: column wrap;
+  padding: 1em 0.5em;
+  background-color: $cbg-filter;
+  height: auto;
+  h2 {
+    color:$ch-filter;
+    margin: 0 0 1em;
+  }
+  select {
+    height: 3em;
+    background-color: $cbg-select;
+    border: 1px solid $cb-select;
+    font-family: $f-default;
+    font-size: 1em;
+    letter-spacing: 0;
+  }
+  #cuisines-select {
+    margin-top: 1.5em;
+  }
+}
+
+/* ====================== Restaurant Listing ====================== */
+#restaurants-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto;
+  grid-gap: 2em;
+  list-style: outside none none;
+  padding: 1em;
+  li {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    font-size: 0.750em;
+    padding-bottom:2em;
+    text-align: center;
+    border-top-left-radius: 3em;
+    border-bottom-right-radius: 3em;
+    background-color: $cbg-list-li;
+
+    .restaurant-img {
+      flex: 0 0 auto;
+      border-top-left-radius: 3em;
+      background-color: $cbg-img;
+      width: 100%;
+      height: auto;
+    }
+    h1 {
+      flex: 2 1 auto;
+      font-size: 2em;
+      font-weight: 200;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      margin: 0;
+      padding:0.625em 0.250em;
+      color: $ch-title-list;
+      border-top: 1px solid $cb-title-list;
+      border-bottom: 1px solid $cb-title-list;
+      /*height: 100px;
+      vertical-align: middle;*/
+    }
+    p {
+      flex: 1 1 15px;
+      padding: 0 0.75em;
+      text-align: justify;
+      font-size: 1.5em;
+      margin: 0.50em 0;
+    }
+    a {
+      flex: 0 0 auto;
+      background-color: $cl-generic;
+      color: #fff;
+      font-size: 1.35em;
+      margin: 0.5em 2em;
+      padding: 0.5em;
+      text-decoration: none;
+      text-transform: uppercase;
+      border-top-left-radius: 0.5em;
+      border-bottom-right-radius: 0.5em;
+
+    	&:focus,
+      &:hover {
+        text-decoration: none;
+    		color: #fff;
+      }
+    	&:hover {
+    		background-color: lighten($cl-generic, 5%);
+      }
+    	&:active {
+    		background-color: darken($cl-generic, 5%);
+      }
+    }
+  }
+
+}
