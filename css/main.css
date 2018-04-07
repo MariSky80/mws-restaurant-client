@@ -143,9 +143,7 @@ footer span a:hover, footer span a:focus {
   padding: 0.625em 0.250em;
   color: #993299;
   border-top: 1px solid #444;
-  border-bottom: 1px solid #444;
-  /*height: 100px;
-  vertical-align: middle;*/ }
+  border-bottom: 1px solid #444; }
 #restaurants-list li p {
   flex: 1 1 15px;
   color: #222;

@@ -1,20 +1,24 @@
-/**
- * Common database helper functions.
- */
+ /**
+  * @description  Common database helper functions.
+  * @constructor
+  */
 class DBHelper {
 
-  /**
-   * Database URL.
-   * Change this to restaurants.json file location on your server.
-   */
+ /**
+  * @description  Database URL. Change this to restaurants.json file location on your server.
+  * @constructor
+  */
   static get DATABASE_URL() {
     const port = 8000 // Change this to your server port
     return `http://localhost:${port}/data/restaurants.json`;
   }
 
-  /**
-   * Fetch all restaurants.
-   */
+
+ /**
+  * @description  Fetch all restaurants.
+  * @constructor
+  * @param {function} callback - Callback function.
+  */
   static fetchRestaurants(callback) {
     let xhr = new XMLHttpRequest();
     xhr.open('GET', DBHelper.DATABASE_URL);
@@ -31,9 +35,13 @@ class DBHelper {
     xhr.send();
   }
 
-  /**
-   * Fetch a restaurant by its ID.
-   */
+
+ /**
+  * @description  Fetch a restaurant by its ID.
+  * @constructor
+  * @param {int} id - Restaurant identifier.
+  * @param {function} callback - Callback function.
+  */
   static fetchRestaurantById(id, callback) {
     // fetch all restaurants with proper error handling.
     DBHelper.fetchRestaurants((error, restaurants) => {
@@ -50,9 +58,13 @@ class DBHelper {
     });
   }
 
-  /**
-   * Fetch restaurants by a cuisine type with proper error handling.
-   */
+
+ /**
+  * @description  Fetch restaurants by a cuisine type with proper error handling.
+  * @constructor
+  * @param {string} cuisine - Neighborhood selected.
+  * @param {function} callback - Callback function.
+  */
   static fetchRestaurantByCuisine(cuisine, callback) {
     // Fetch all restaurants  with proper error handling
     DBHelper.fetchRestaurants((error, restaurants) => {
@@ -66,9 +78,14 @@ class DBHelper {
     });
   }
 
-  /**
-   * Fetch restaurants by a neighborhood with proper error handling.
-   */
+
+
+ /**
+  * @description  Fetch restaurants by a neighborhood with proper error handling.
+  * @constructor
+  * @param {string} neighborhood - Neighborhood selected.
+  * @param {function} callback - Callback function.
+  */
   static fetchRestaurantByNeighborhood(neighborhood, callback) {
     // Fetch all restaurants
     DBHelper.fetchRestaurants((error, restaurants) => {
@@ -82,9 +99,14 @@ class DBHelper {
     });
   }
 
-  /**
-   * Fetch restaurants by a cuisine and a neighborhood with proper error handling.
-   */
+
+ /**
+  * @description  Fetch restaurants by a cuisine and a neighborhood with proper error handling.
+  * @constructor
+  * @param {string} cuisine - Cuisine selected.
+  * @param {string} neighborhood - Neighborhood selected.
+  * @param {function} callback - Callback function.
+  */
   static fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, callback) {
     // Fetch all restaurants
     DBHelper.fetchRestaurants((error, restaurants) => {
@@ -103,9 +125,12 @@ class DBHelper {
     });
   }
 
-  /**
-   * Fetch all neighborhoods with proper error handling.
-   */
+
+ /**
+  * @description  Fetch all neighborhoods with proper error handling.
+  * @constructor
+  * @param {function} callback - Callback function.
+  */
   static fetchNeighborhoods(callback) {
     // Fetch all restaurants
     DBHelper.fetchRestaurants((error, restaurants) => {
@@ -121,9 +146,12 @@ class DBHelper {
     });
   }
 
-  /**
-   * Fetch all cuisines with proper error handling.
-   */
+
+ /**
+  * @description  Fetch all cuisines with proper error handling.
+  * @constructor
+  * @param {function} callback - Callback function.
+  */
   static fetchCuisines(callback) {
     // Fetch all restaurants
     DBHelper.fetchRestaurants((error, restaurants) => {
@@ -139,23 +167,33 @@ class DBHelper {
     });
   }
 
-  /**
-   * Restaurant page URL.
-   */
+
+ /**
+  * @description  Restaurant page URL.
+  * @constructor
+  * @param {object} restaurant - Restaurant information.
+  */
   static urlForRestaurant(restaurant) {
     return (`./restaurant.html?id=${restaurant.id}`);
   }
 
-  /**
-   * Restaurant image URL.
-   */
+
+ /**
+  * @description Restaurant image URL.
+  * @constructor
+  * @param {object} restaurant - Restaurant information.
+  */
   static imageUrlForRestaurant(restaurant) {
     return (`/img/${restaurant.photograph}`);
   }
 
-  /**
-   * Map marker for a restaurant.
-   */
+
+ /**
+  * @description Map marker for a restaurant.
+  * @constructor
+  * @param {object} restaurant - Restaurant coords and name.
+  * @param {object} map - Google map object.
+  */
   static mapMarkerForRestaurant(restaurant, map) {
     const marker = new google.maps.Marker({
       position: restaurant.latlng,
@@ -165,6 +203,22 @@ class DBHelper {
       animation: google.maps.Animation.DROP}
     );
     return marker;
+  }
+
+
+ /**
+  * @description Register ServiceWorker.
+  * @constructor
+  */
+  static registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then((reg) => {
+          console.log(`Service Worker registration successful. Its scope is ${reg.scope} `);
+        }).catch((error) => {
+          console.log(`Service Worker registration error: ${error}`);
+        });
+    }
   }
 
 }

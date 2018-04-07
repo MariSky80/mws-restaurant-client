@@ -5,15 +5,23 @@ var map
 var markers = []
 
 /**
- * Fetch neighborhoods and cuisines as soon as the page is loaded.
- */
+  * @description Call functions when DOM content is loaded
+  * @constructor
+  * @param {string} DOMContentLoaded - String detected.
+  * @param {event} event - Event called
+  */
 document.addEventListener('DOMContentLoaded', (event) => {
+  DBHelper.registerServiceWorker();
   fetchNeighborhoods();
   fetchCuisines();
 });
 
+
 /**
- * Fetch all neighborhoods and set their HTML.
+ * @description  Fetch all neighborhoods and set their HTML.
+ * @constructor
+ * @param {object} error - error object.
+ * @param {object} neighborhoods - neighborhood list.
  */
 fetchNeighborhoods = () => {
   DBHelper.fetchNeighborhoods((error, neighborhoods) => {
@@ -26,9 +34,12 @@ fetchNeighborhoods = () => {
   });
 }
 
+
 /**
- * Set neighborhoods HTML.
- */
+* @description  Set neighborhoods HTML.
+* @constructor
+* @param {object} neighborhoods - neighborhood list.
+*/
 fillNeighborhoodsHTML = (neighborhoods = self.neighborhoods) => {
   const select = document.getElementById('neighborhoods-select');
   neighborhoods.forEach(neighborhood => {
@@ -39,9 +50,13 @@ fillNeighborhoodsHTML = (neighborhoods = self.neighborhoods) => {
   });
 }
 
+
 /**
- * Fetch all cuisines and set their HTML.
- */
+* @description  etch all cuisines and set their HTML.
+* @constructor
+* @param {object} error - error object.
+* @param {object} cuisines - cuisines list.
+*/
 fetchCuisines = () => {
   DBHelper.fetchCuisines((error, cuisines) => {
     if (error) { // Got an error!
@@ -53,9 +68,12 @@ fetchCuisines = () => {
   });
 }
 
+
 /**
- * Set cuisines HTML.
- */
+* @description  Set cuisines HTML.
+* @constructor
+* @param {object} cuisines - cuisines list.
+*/
 fillCuisinesHTML = (cuisines = self.cuisines) => {
   const select = document.getElementById('cuisines-select');
 
@@ -67,9 +85,11 @@ fillCuisinesHTML = (cuisines = self.cuisines) => {
   });
 }
 
+
 /**
- * Initialize Google map, called from HTML.
- */
+* @description  Initialize Google map, called from HTML.
+* @constructor
+*/
 window.initMap = () => {
   let loc = {
     lat: 40.722216,
@@ -83,9 +103,11 @@ window.initMap = () => {
   updateRestaurants();
 }
 
+
 /**
- * Update page and map for current restaurants.
- */
+* @description  Update page and map for current restaurants.
+* @constructor
+*/
 updateRestaurants = () => {
   const cSelect = document.getElementById('cuisines-select');
   const nSelect = document.getElementById('neighborhoods-select');
@@ -106,9 +128,12 @@ updateRestaurants = () => {
   })
 }
 
+
 /**
- * Clear current restaurants, their HTML and remove their map markers.
- */
+* @description  Clear current restaurants, their HTML and remove their map markers.
+* @constructor
+* @param {object} restaurants - restaurants list.
+*/
 resetRestaurants = (restaurants) => {
   // Remove all restaurants
   self.restaurants = [];
@@ -121,9 +146,12 @@ resetRestaurants = (restaurants) => {
   self.restaurants = restaurants;
 }
 
+
 /**
- * Create all restaurants HTML and add them to the webpage.
- */
+* @description Create all restaurants HTML and add them to the webpage.
+* @constructor
+* @param {object} restaurants - restaurants created.
+*/
 fillRestaurantsHTML = (restaurants = self.restaurants) => {
   const ul = document.getElementById('restaurants-list');
   restaurants.forEach(restaurant => {
@@ -132,9 +160,12 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
   addMarkersToMap();
 }
 
+
 /**
- * Create restaurant HTML.
- */
+* @description Create restaurant HTML.
+* @constructor
+* @param {object} restaurant - restaurants object.
+*/
 createRestaurantHTML = (restaurant) => {
   const li = document.createElement('li');
 
@@ -164,9 +195,12 @@ createRestaurantHTML = (restaurant) => {
   return li
 }
 
+
 /**
- * Add markers for current restaurants to the map.
- */
+* @description Add markers for current restaurants to the map.
+* @constructor
+* @param {object} restaurants - restaurants list.
+*/
 addMarkersToMap = (restaurants = self.restaurants) => {
   restaurants.forEach(restaurant => {
     // Add marker to the map
