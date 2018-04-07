@@ -40,8 +40,24 @@ a:focus {
   text-decoration: none;
 }
 
+/* ====================== Skip link ====================== */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  color: $cf-skip;
+  padding: 8px;
+  z-index: 100;
+  border-bottom-right-radius: 8px;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+
 /* ====================== Navigation ====================== */
-nav {
+.menu {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -86,11 +102,13 @@ footer {
     a,
     a:visited,
     a:link {
-      color: $cl-generic;
+      color: $cl-footer;
+      text-decoration: underline;
     }
     a:hover,
     a:focus {
-      color: $cl-generic-hover;
+      color: $cl-footer-hover;
+      text-decoration: underline;
     }
   }
 }

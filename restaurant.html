@@ -17,19 +17,22 @@
   </head>
 
   <body>
-
+    <!-- Skip link -->
+    <a href="#restaurant-container" class="skip-link" tabindex="0">Skip to the content</a>
     <!-- Beginning header -->
     <header>
       <!-- Beginning nav -->
-      <nav>
+      <nav class="menu">
         <h1>
           <a href="/">Restaurant Reviews</a>
         </h1>
       </nav>
       <!-- Beginning breadcrumb -->
-      <ul id="breadcrumb" >
-        <li><a href="/">Home</a></li>
-      </ul>
+      <nav class="breadcrumb">
+        <ul id="breadcrumb" aria-label="Breadcrumb">
+          <li><a href="/">Home</a></li>
+        </ul>
+      </nav>
       <!-- End breadcrumb -->
       <!-- End nav -->
     </header>
@@ -39,7 +42,7 @@
     <main id="main-content" class="restaurant-detail">
       <div class="wrapper">
         <!-- Beginning map -->
-        <section id="map-container">
+        <section id="map-container" role="application" aria-hidden="true">
           <div id="map"></div>
         </section>
         <!-- End map -->

@@ -5,28 +5,35 @@ $cbg-header: #252831;
 $cbg-content: #f3f3f3;
 $cbg-footer: #444;
 $cbg-map: #ccc;
-$cbg-filter: #3397db;
+$cbg-filter: #993299;
 $cbg-select: #fff;
 $cbg-list-li: #fff;
 $cbg-img: #ccc;
 $cbg-cuisine: #000;
 $cbg-review: #000;
+$cbg-detail: #fff;
 
 /* Font */
-$cf-footer: #fff;
-$cf-reviews: #666;
+$cf-skip: #fff;
+$cf-hours: #222;
+$cf-reviews:#222;
+$cf-p: #222;
+$cf-date: #666;
+$cf-footer: #d8b2d8;
 
 /* Link */
 $cl-header: #fff;
 $cl-content: #f3f3f3;
-$cl-generic: #f18200;
-$cl-generic-hover: #3397db;
-$cl-bc: #0275d8;
-$cl-bc-hover: #01447e;
+$cl-generic: #993299;
+$cl-generic-hover: #800080;
+$cl-bc: #800080;
+$cl-bc-hover: #000;
+$cl-footer: #fff;
+$cl-footer-hover: #b266b2;
 
 /* Headings */
 $ch-filter: #fff;
-$ch-title-list: #f18200;
+$ch-title-list: #993299;
 
 /* Border */
 $cb-select: #fff;
@@ -36,4 +43,4 @@ $cb-separator: #444;
 /* Paragraph */
 $cp-cuisine: #eee;
 $cp-review: #fff;
-$cp-rating: #f18200;
+$cp-rating: #993299;

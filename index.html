@@ -16,11 +16,12 @@
   </head>
 
   <body>
-
+    <!-- Skip link -->
+    <a href="#filter-options" class="skip-link" tabindex="0">Skip to the content</a>
     <!-- Beginning header -->
     <header>
       <!-- Beginning nav -->
-      <nav>
+      <nav class="menu">
         <h1>
           <a href="/">Restaurant Reviews</a>
         </h1>
@@ -31,18 +32,18 @@
     <!-- Beginning main -->
     <main id="main-content">
       <!-- Beginning map -->
-      <section id="map-container">
+      <section id="map-container" role="application" aria-hidden="true">
         <div id="map"></div>
       </section>
       <!-- End map -->
       <section>
         <!-- Beginning filter -->
-        <div class="filter-options">
+        <div id="filter-options" class="filter-options" tabindex="-1">
           <h2>Filter Results</h2>
-          <select id="neighborhoods-select" name="neighborhoods" onchange="updateRestaurants()">
+          <select id="neighborhoods-select" name="neighborhoods" onchange="updateRestaurants()" aria-label="Neighborhoods filter">
             <option value="all">All Neighborhoods</option>
           </select>
-          <select id="cuisines-select" name="cuisines" onchange="updateRestaurants()">
+          <select id="cuisines-select" name="cuisines" onchange="updateRestaurants()" aria-label="Cuisines filter">
             <option value="all">All Cuisines</option>
           </select>
         </div>

@@ -20,8 +20,8 @@
 
 /* ====================== Portrait tablets, portrait iPad, landscape e-readers, landscape 800x480 or 854x480 phones ====================== */
 @media screen and (min-width: 641px) {
-  /* ====================== Navigation ====================== */
-  nav {
+  /* ===================== Navigation ====================== */
+  .menu {
     h1 {
       a {
         font-size: 0.95em;
@@ -61,7 +61,7 @@
 /* ====================== Tablet, landscape iPad, lo-res laptops ands desktops ====================== */
 @media screen and (min-width: 961px) {
   /* ====================== Navigation ====================== */
-  nav {
+  .menu {
     h1 {
       a {
         font-size: 1.125em;

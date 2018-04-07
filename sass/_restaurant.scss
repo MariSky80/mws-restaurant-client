@@ -91,14 +91,15 @@
   }
 
   #restaurant-address {
-    background-color: #fff;
+    background-color: $cbg-detail;
     margin: 0;
     padding: 1em 1.5em;
   }
 
   #restaurant-hours {
     flex-basis: auto;
-    background-color: #fff;
+    background-color: $cbg-detail;
+    color: $cf-hours;
     border-bottom-right-radius: 2.5em;
     padding: 0.5em 1.5em 2em;
     margin:0;
@@ -158,6 +159,7 @@
       p:nth-child(2) {
         padding: 0.5em 1.5em 0.5em 0;
         text-align: right;
+        color: $cf-date;
         border-bottom: 1px solid $cb-separator;
         grid-column: 2 / 2;
         grid-row: 2;
