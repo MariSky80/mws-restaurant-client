@@ -10,6 +10,8 @@
     <!-- Favicon -->
     <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
     <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+    <!-- Normalize Css file -->
+    <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
     <!-- Main CSS file -->
     <link rel="stylesheet" href="css/detail.css">
     <!-- <link rel="stylesheet" href="css/old_styles.css"> -->
@@ -42,12 +44,12 @@
     <main id="main-content" class="restaurant-detail">
       <div class="wrapper">
         <!-- Beginning map -->
-        <section id="map-container" role="application" aria-hidden="true">
+        <section id="map-container" role="application" aria-hidden="true" aria-label="Google maps">
           <div id="map"></div>
         </section>
         <!-- End map -->
         <!-- Beginning restaurant -->
-        <section id="restaurant-container">
+        <section id="restaurant-container" role="contentinfo" aria-label="Restaurant details">
           <h1 id="restaurant-name"></h1>
           <img id="restaurant-img" alt="">
           <p id="restaurant-cuisine"></p>
@@ -56,7 +58,7 @@
         </section>
         <!-- end restaurant -->
         <!-- Beginning reviews -->
-        <section id="reviews-container">
+        <section id="reviews-container" role="contentinfo" aria-label="Reviews list">
           <ul id="reviews-list"></ul>
         </section>
         <!-- End reviews -->

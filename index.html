@@ -10,6 +10,8 @@
     <!-- Favicon -->
     <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
     <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+    <!-- Normalize Css file -->
+    <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
     <!-- Main CSS file -->
     <link rel="stylesheet" href="css/main.css">
     <title>Restaurant Reviews</title>
@@ -32,13 +34,13 @@
     <!-- Beginning main -->
     <main id="main-content">
       <!-- Beginning map -->
-      <section id="map-container" role="application" aria-hidden="true">
+      <section id="map-container" role="application" aria-hidden="true" aria-label="Google maps">
         <div id="map"></div>
       </section>
       <!-- End map -->
-      <section>
+      <section role="contentinfo" aria-label="Restaurants list">
         <!-- Beginning filter -->
-        <div id="filter-options" class="filter-options" tabindex="-1">
+        <div id="filter-options" class="filter-options" tabindex="-1" role="search">
           <h2>Filter Results</h2>
           <select id="neighborhoods-select" name="neighborhoods" onchange="updateRestaurants()" aria-label="Neighborhoods filter">
             <option value="all">All Neighborhoods</option>
