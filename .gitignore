@@ -1,2 +1,4 @@
+node_modules
+dist
 .run
 .sass-cache

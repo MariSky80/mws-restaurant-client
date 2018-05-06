@@ -1,0 +1,38 @@
+{
+  "name": "mws-restaurant-client",
+  "version": "1.0.0",
+  "description": "Mobile Web Specialist Nanodegree client project",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MariSky80/mws-restaurant-client.git"
+  },
+  "author": "Maricel Bros Maimó",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MariSky80/mws-restaurant-client/issues"
+  },
+  "homepage": "https://github.com/MariSky80/mws-restaurant-client#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babelify": "^8.0.0",
+    "browserify": "^16.2.0",
+    "del": "^3.0.0",
+    "gulp": "^3.9.1",
+    "gulp-load-plugins": "^1.5.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^4.0.1",
+    "gulp-sourcemaps": "^2.6.4",
+    "gulp-util": "^3.0.8",
+    "idb": "^2.1.1",
+    "lodash.assign": "^4.2.0",
+    "merge-stream": "^1.0.1",
+    "vinyl-buffer": "^1.0.1",
+    "vinyl-source-stream": "^2.0.0",
+    "watchify": "^3.11.0"
+  }
+}

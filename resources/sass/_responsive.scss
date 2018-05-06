@@ -74,6 +74,7 @@
     grid-template-columns: repeat(3, 1fr);
   }
 
+
   /* ====================== Detail Main content structure ====================== */
   .wrapper {
     grid-template-columns: repeat(2, 1fr);
@@ -84,8 +85,16 @@
 
 /* ====================== Big landscape tablets, laptops, and desktops ====================== */
 @media screen and (min-width: 1025px) {
+
 }
 
 /* ====================== Hi-res laptops and desktops ====================== */
 @media screen and (min-width: 1281px) {
+  .restaurants {
+    margin: 0 auto;
+    max-width: 1024px;
+  }
+  #restaurants-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
