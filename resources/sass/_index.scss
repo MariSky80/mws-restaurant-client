@@ -47,7 +47,6 @@
     .restaurant-img {
       flex: 0 0 auto;
       border-top-left-radius: 3em;
-      background-color: $cbg-img;
       width: 100%;
       height: auto;
     }
@@ -62,6 +61,7 @@
       color: $ch-title-list;
       border-top: 1px solid $cb-title-list;
       border-bottom: 1px solid $cb-title-list;
+      margin-top: -3px;
     }
     p {
       flex: 1 1 15px;

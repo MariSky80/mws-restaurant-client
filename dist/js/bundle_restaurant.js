@@ -389,8 +389,8 @@ class DBHelper {
     return this.dbPromise.then(function (db) {
       if (!db) return;
       const store = db.transaction(IDB_OBJECT).objectStore(IDB_OBJECT);
-      const idIndex = store.index('id');
-      return idIndex.getAll(id);
+      const indexId = store.index('id');
+      return indexId.getAll(id);
     });
   }
 
@@ -420,7 +420,7 @@ class DBHelper {
    */
   static fetchRestaurantById(id, callback) {
     fetch(`${DBHelper.DATABASE_URL}/${id}`).then(response => response.json()).then(restaruant => callback(null, restaruant)).catch(error => {
-      getStoredRestaurant(id).then(storedRestaurant => {
+      DBHelper.getStoredRestaurant(id).then(storedRestaurant => {
         callback(null, storedRestaurant);
       }).catch(error => {
         callback(error, null);
@@ -549,7 +549,7 @@ class DBHelper {
    */
   static imageUrlForRestaurant(restaurant) {
     let photograph = 'photograph' in restaurant ? restaurant.photograph : restaurant.id;
-    return `/dist/img/${photograph}.jpg`;
+    return `/dist/img/${photograph}`;
   }
 
   /**
@@ -664,10 +664,33 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   const address = document.getElementById('restaurant-address');
   address.innerHTML = restaurant.address;
 
+  const img = DBHelper.imageUrlForRestaurant(restaurant);
+  const picture = document.getElementById('restaurant-picture');
+  picture.className = 'restaurant-img';
+  picture.setAttribute('aria-labelledby', `restaurant-img`);
+  picture.setAttribute('role', 'img');
+
+  const sourceSmall = document.createElement('source');
+  sourceSmall.setAttribute('media', '(max-width:480px)');
+  sourceSmall.setAttribute('srcset', `${img}-380_small.jpg`);
+  picture.append(sourceSmall);
+
+  const sourceMedium = document.createElement('source');
+  sourceMedium.setAttribute('media', '(min-width: 480px) and (max-width: 960px)');
+  sourceMedium.setAttribute('srcset', `${img}-512_medium.jpg`);
+  picture.append(sourceMedium);
+
+  const sourceLarge = document.createElement('source');
+  sourceLarge.setAttribute('media', '(min-width:961px)');
+  sourceLarge.setAttribute('srcset', `${img}-800_large.jpg`);
+  picture.append(sourceLarge);
+
   const image = document.getElementById('restaurant-img');
   image.className = 'restaurant-img';
   image.alt = `Picture of ${restaurant.name} restaurant`;
-  image.src = DBHelper.imageUrlForRestaurant(restaurant);
+  image.src = `${img}-380_small.jpg`;
+
+  picture.append(image);
 
   const cuisine = document.getElementById('restaurant-cuisine');
   cuisine.innerHTML = restaurant.cuisine_type;

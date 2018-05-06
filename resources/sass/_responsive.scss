@@ -92,9 +92,6 @@
 @media screen and (min-width: 1281px) {
   .restaurants {
     margin: 0 auto;
-    max-width: 1024px;
-  }
-  #restaurants-list {
-    grid-template-columns: repeat(2, 1fr);
+    max-width: 1281px;
   }
 }

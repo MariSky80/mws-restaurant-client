@@ -16,13 +16,18 @@
     "url": "https://github.com/MariSky80/mws-restaurant-client/issues"
   },
   "homepage": "https://github.com/MariSky80/mws-restaurant-client#readme",
-  "dependencies": {},
+  "dependencies": {
+    "grunt-responsive-images": "^1.10.1"
+  },
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babelify": "^8.0.0",
     "browserify": "^16.2.0",
     "del": "^3.0.0",
+    "grunt": "^1.0.2",
+    "grunt-mkdir": "^1.0.0",
     "gulp": "^3.9.1",
+    "gulp-grunt": "^0.5.5",
     "gulp-load-plugins": "^1.5.0",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^4.0.1",

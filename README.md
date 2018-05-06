@@ -14,6 +14,7 @@
 
 ```shell
 npm install
+gulp clean
 gulp
 ```
 

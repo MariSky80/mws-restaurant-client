@@ -1,4 +1,5 @@
 const gulp = require('gulp');
+require('gulp-grunt')(gulp); // add all the gruntfile tasks to gulp
 const plugins = require('gulp-load-plugins')({lazy:false});
 const del = require('del');
 const sass = require('gulp-sass');
@@ -12,13 +13,13 @@ const mergeStream = require('merge-stream');
 
 
 //Execute by default.
-gulp.task('default', ['clean', 'sass', 'copy', 'js', 'watch']);
+gulp.task('default', ['sass', 'copy', 'js', 'grunt-create', 'watch']);
 
 //WATCH
 gulp.task('watch', function () {
   gulp.watch(['resources/scss/*.scss'], ['sass']);
   gulp.watch(['resources/js/*.js'], ['js']);
-  gulp.watch(['resources/imgs/**/*', 'resources/*.html', 'resources/sw.js', 'resources/manifest.json', 'resources/browserconfig.xml'],  ['copy']);
+  gulp.watch(['resources/img/favicon/*.*', 'resources/*.html', 'resources/sw.js', 'resources/manifest.json', 'resources/browserconfig.xml'],  ['copy']);
 
   Object.keys(jsBundles).forEach(function(key) {
     var b = jsBundles[key];
@@ -36,11 +37,11 @@ gulp.task('clean', function (done) {
 //COPY FILES
 gulp.task('copy', function () {
   return mergeStream(
-    gulp.src('resources/img/**/*').pipe(gulp.dest('dist/img/')),
+    gulp.src('resources/img/favicon/*.*').pipe(gulp.dest('dist/img/favicon/')),
     gulp.src('resources/*.html').pipe(gulp.dest('dist/')),
     gulp.src('resources/sw.js').pipe(gulp.dest('dist/')),
     gulp.src('resources/manifest.json').pipe(gulp.dest('dist/')),
-    gulp.src('resources/browserconfig.xml').pipe(gulp.dest('dist/'))
+    gulp.src('resources/browserconfig.xml').pipe(gulp.dest('dist/')),
   );
 });
 

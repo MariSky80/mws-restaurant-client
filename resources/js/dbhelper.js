@@ -79,8 +79,8 @@ class DBHelper {
     return this.dbPromise.then(function(db) {
       if(!db) return;
       const store = db.transaction(IDB_OBJECT).objectStore(IDB_OBJECT);
-      const idIndex = store.index('id');
-      return idIndex.getAll(id);
+      const indexId = store.index('id');
+      return indexId.getAll(id);
     })
   }
 
@@ -119,10 +119,10 @@ class DBHelper {
       .then(response => response.json())
       .then(restaruant => callback(null, restaruant))
       .catch(error => {
-        getStoredRestaurant(id).then(storedRestaurant => {
+        DBHelper.getStoredRestaurant(id)
+        .then((storedRestaurant) => {
           callback(null, storedRestaurant);
-        })
-        .catch(error => {
+        }).catch(error => {
           callback(error, null);
         })
       });
@@ -254,7 +254,7 @@ class DBHelper {
   */
   static imageUrlForRestaurant(restaurant) {
     let photograph = ('photograph' in restaurant) ? restaurant.photograph : restaurant.id;
-    return (`/dist/img/${photograph}.jpg`);
+    return (`/dist/img/${photograph}`);
   }
 
 
