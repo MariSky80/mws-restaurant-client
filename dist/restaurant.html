@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="Description" content="Author: Maricel Bros Maimó,
+      Category: Udavity, MWS, Stage 1, Responsive, Accessibility, Restaurant details">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="img/favicon/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="img/favicon/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="57x57" href="img/favicon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="img/favicon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="img/favicon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="img/favicon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="img/favicon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="img/favicon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="img/favicon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="img/favicon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="img/favicon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="img/favicon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="img/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="img/favicon/ms-icon-144x144.png">
+    <meta name="theme-color" content="#993299">
+    <!-- Normalize Css file -->
+    <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css">
+    <!-- Main CSS file -->
+    <link rel="stylesheet" href="css/detail.css">
+    <!-- <link rel="stylesheet" href="css/old_styles.css"> -->
+    <title>Restaurant Details</title>
+  </head>
+
+  <body>
+    <!-- Skip link -->
+    <a href="#restaurant-container" class="skip-link" tabindex="0">Skip to the content</a>
+    <!-- Beginning header -->
+    <header>
+      <!-- Beginning nav -->
+      <nav class="menu">
+        <h1>
+          <a href="/">Restaurant Reviews</a>
+        </h1>
+      </nav>
+      <!-- Beginning breadcrumb -->
+      <nav class="breadcrumb">
+        <ul id="breadcrumb" aria-label="Breadcrumb">
+          <li><a href="/">Home</a></li>
+        </ul>
+      </nav>
+      <!-- End breadcrumb -->
+      <!-- End nav -->
+    </header>
+    <!-- End header -->
+
+    <!-- Beginning main -->
+    <main id="main-content" class="restaurant-detail">
+      <div class="wrapper">
+        <!-- Beginning map -->
+        <section id="map-container" aria-hidden="true" aria-label="Google maps">
+          <div id="map" role="application"></div>
+        </section>
+        <!-- End map -->
+        <!-- Beginning restaurant -->
+        <section id="restaurant-container" role="contentinfo" aria-label="Restaurant details">
+          <h2 id="restaurant-name"></h2>
+          <img id="restaurant-img" alt="">
+          <p id="restaurant-cuisine"></p>
+          <p id="restaurant-address"></p>
+          <table id="restaurant-hours"></table>
+        </section>
+        <!-- end restaurant -->
+        <!-- Beginning reviews -->
+        <section id="reviews-container" role="contentinfo" aria-label="Reviews list">
+          <ul id="reviews-list"></ul>
+        </section>
+        <!-- End reviews -->
+      </div>
+    </main>
+    <!-- End main -->
+
+    <!-- Beginning footer -->
+    <footer>
+      <span>Copyright (c) 2017 <a href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.</span>
+    </footer>
+    <!-- End footer -->
+
+    <!-- Beginning scripts -->
+    <!-- Main javascript file -->
+    <script src="js/bundle_restaurant.js"></script>
+    <!-- Service worker javascript file -->
+    <script src="sw.js"></script>
+    <!-- Google Maps -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCtvz3BAT5-XChlZ_dhuW3GAglJeHk_2Os&libraries=places&callback=initMap"></script>
+    <!-- End scripts -->
+
+  </body>
+
+</html>
