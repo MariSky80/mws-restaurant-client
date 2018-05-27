@@ -41,10 +41,11 @@
   display: grid;
   grid-gap: 0;
   grid-template-columns: repeat(1, 1fr);
-	grid-template-rows: 400px auto auto;
+	grid-template-rows: 400px auto auto auto;
   grid-template-areas: "map"
 	                     "restaurant"
-	                     "reviews";
+	                     "reviews"
+                       "form";
 
   #restaurant-container {
   	grid-area: restaurant;
@@ -54,6 +55,9 @@
   }
   #reviews-container{
   	grid-area: reviews;
+  }
+  #review-form-container {
+    grid-area: form;
   }
 }
 
@@ -94,6 +98,12 @@
     background-color: $cbg-detail;
     margin: 0;
     padding: 1em 1.5em;
+  }
+
+  #favorite {
+    text-align: right;
+    margin-top: -60px;
+    padding: 5px 10px;
   }
 
   #restaurant-hours {
@@ -182,6 +192,87 @@
         grid-column: 1 / 4;
         grid-row: 3;
       }
+    }
+    li:last-child {
+      margin: 0;
+    }
+  }
+}
+
+/* ====================== Review form ====================== */
+#review-form-container {
+  padding: 0 1em 2em;
+  display: flex;
+  flex-flow: column wrap;
+  font-size: 1em;
+
+  h3 {
+    color: $ch-title-list;
+    font-size: 2em;
+    font-weight: 200;
+  }
+
+  form {
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: space-between;
+
+    input,
+    textarea,
+    select,
+    .alert,
+    .success {
+      padding: 0.5em;
+      margin: 0 0 1em;
+      font-size: 1em;
+      border: 1px solid $cb-select-form;
+      border-radius: 0;
+      border-top-left-radius: 0.5em;
+      border-bottom-right-radius: 0.5em;
+    }
+
+    input,
+    select {
+      height: 2.5em;
+    }
+
+    button {
+      background-color: $cl-generic;
+      color: #fff;
+      font-size: 1.35em;
+      padding: 0.5em;
+      text-decoration: none;
+      text-transform: uppercase;
+      border-top-left-radius: 0.5em;
+      border-bottom-right-radius: 0.5em;
+      cursor: pointer;
+
+    	&:focus,
+      &:hover {
+        text-decoration: none;
+    		color: #fff;
+      }
+    	&:hover {
+    		background-color: lighten($cl-generic, 5%);
+      }
+    	&:active {
+    		background-color: darken($cl-generic, 5%);
+      }
+    }
+    .alert {
+      margin: 1em 0;
+      display: none;
+      color: $cac-alert;
+      background-color: $cabg-alert;
+      border-color: $cabc-alert;
+    }
+
+    .success {
+      margin: 1em 0;
+      display: none;
+      color: $cac-success;
+      background-color: $cabg-success;
+      border-color: $cabc-success;
     }
   }
 }

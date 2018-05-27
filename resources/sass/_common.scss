@@ -75,12 +75,16 @@ a:focus {
 }
 
 /* ====================== Map ====================== */
+#static-map,
 #map {
   display: flex;
   height: 400px;
+  background-color: transparent;
+}
+#map {
+  display: none;
   background-color: $cbg-map;
 }
-
 
 /* ====================== Footer ====================== */
 footer {
@@ -109,6 +113,27 @@ footer {
     a:focus {
       color: $cl-footer-hover;
       text-decoration: underline;
+    }
+  }
+}
+
+/* ====================== Favorite image ====================== */
+.favorite {
+  background-color: transparent;
+  cursor:pointer;
+  &:focus,
+  &:hover {
+    text-decoration: none;
+    background-color: transparent;
+  }
+  .svg-fav {
+    height: 35px;
+    width: 35px;
+    .path-fav {
+      fill: $ci-favorite;
+      &:hover {
+        fill:darken($cl-generic, 10%);
+      }
     }
   }
 }

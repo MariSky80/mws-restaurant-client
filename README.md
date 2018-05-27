@@ -8,6 +8,8 @@
 
 **Stage Two** :  Get information from server and cache that data with IndexedDB.  Audit the client side from Lighthouse and get a score of **Performance > 70** , **PWA > 90** and **Accessibility > 90**
 
+**Stage Three** : Add form to create new reviews.  Add button to add a restaurant to favorite.  Offline use: The client application works offline.  Audit the client side from Lighthouse and get a score of **Performance > 90** , **PWA > 90** and **Accessibility > 90**
+
 ## How to start
 
 ### Execute on development mode

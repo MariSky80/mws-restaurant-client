@@ -1,4 +1,4 @@
-const staticCacheName = 'mws-restaurant-stage-2';
+const staticCacheName = 'mws-restaurant-stage-3';
 
 let filesToCache = [
   '/',

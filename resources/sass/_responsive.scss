@@ -79,7 +79,8 @@
   .wrapper {
     grid-template-columns: repeat(2, 1fr);
     grid-template-areas: "map         map    "
-  	                     "restaurant  reviews";
+  	                     "restaurant  reviews"
+                         ".......     form";
   }
 }
 

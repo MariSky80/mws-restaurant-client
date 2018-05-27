@@ -314,7 +314,8 @@
 },{}],2:[function(require,module,exports){
 const idb = require('idb');
 const IDB_DB = 'restaurant-db';
-const IDB_OBJECT = 'restaurants';
+const IDB_RESTAURANTS = 'restaurants';
+const IDB_REVIEWS = 'reviews';
 
 /**
  * @description  Common database helper functions.
@@ -325,9 +326,18 @@ class DBHelper {
    * @description  Database URL. Change this to restaurants.json file location on your server.
    * @constructor
    */
-  static get DATABASE_URL() {
+  static get RESTAURANTS_URL() {
     const port = 1337; // Change this to your server port
     return `http://localhost:${port}/restaurants`;
+  }
+
+  /**
+   * @description  Database URL. Change this to restaurants.json file location on your server.
+   * @constructor
+   */
+  static get REVIEWS_URL() {
+    const port = 1337; // Change this to your server port
+    return `http://localhost:${port}/reviews`;
   }
 
   /**
@@ -345,10 +355,16 @@ class DBHelper {
       switch (upgradeDb.oldVersion) {
         case 0:
         case 1:
-          const store = upgradeDb.createObjectStore(IDB_OBJECT, {
+          const storeRestaurant = upgradeDb.createObjectStore(IDB_RESTAURANTS, {
             keyPath: 'id'
           });
-          store.createIndex('by-id', 'id');
+          storeRestaurant.createIndex('by-id', 'id', { unique: true });
+
+          const storeReviews = upgradeDb.createObjectStore(IDB_REVIEWS, {
+            keyPath: 'id'
+          });
+          storeReviews.createIndex('by-id', "id", { unique: true });
+          storeReviews.createIndex('by-restaurant-id', 'restaurant_id');
       }
     });
   }
@@ -356,40 +372,46 @@ class DBHelper {
   /**
    * @description  Save data restaurant.
    * @constructor
-   * @param {object} restaurant - Restaurant object.
+   * @param {object} Object list - Object like restaurant, reveiw, ...
    */
-  static storeIndexedDB(restaurants) {
+  static storeIndexedDB(table, objects) {
     this.dbPromise.then(function (db) {
       if (!db) return;
-      let tx = db.transaction(IDB_OBJECT, 'readwrite');
-      const store = tx.objectStore(IDB_OBJECT);
-      restaurants.forEach(function (restaurant) {
-        store.put(restaurant);
-      });
+
+      let tx = db.transaction(table, 'readwrite');
+      const store = tx.objectStore(table);
+      if (Array.isArray(objects)) {
+        objects.forEach(function (object) {
+          store.put(object);
+        });
+      } else {
+        store.put(objects);
+      }
     });
   }
 
   /**
-   * @description  Get all restaurants from indexedDB.
+   * @description  Get a collection of objects from indexedDB.
    * @constructor
    */
-  static getStoredRestaurants() {
+  static getStoredObjects(table) {
     return this.dbPromise.then(function (db) {
       if (!db) return;
-      const store = db.transaction(IDB_OBJECT).objectStore(IDB_OBJECT);
+      const store = db.transaction(table).objectStore(table);
       return store.getAll();
     });
   }
 
   /**
-   * @description  Get all restaurants from indexedDB.
-   * @constructor
+   * @description  Get object from indexedDB by index
+   * @constructor {int} id - Restaurant id
    */
-  static getStoredRestaurant(id) {
+  static getStoredObjectById(table, idx, id) {
     return this.dbPromise.then(function (db) {
       if (!db) return;
-      const store = db.transaction(IDB_OBJECT).objectStore(IDB_OBJECT);
-      const indexId = store.index('id');
+
+      const store = db.transaction(table).objectStore(table);
+      const indexId = store.index(idx);
       return indexId.getAll(id);
     });
   }
@@ -400,11 +422,11 @@ class DBHelper {
    * @param {function} callback - Callback function.
    */
   static fetchRestaurants(callback) {
-    fetch(DBHelper.DATABASE_URL).then(response => response.json()).then(restaurants => {
-      DBHelper.storeIndexedDB(restaurants);
+    fetch(DBHelper.RESTAURANTS_URL).then(response => response.json()).then(restaurants => {
+      DBHelper.storeIndexedDB(IDB_RESTAURANTS, restaurants);
       callback(null, restaurants);
     }).catch(error => {
-      DBHelper.getStoredRestaurants().then(storedRestaurants => {
+      DBHelper.getStoredObjects(IDB_RESTAURANTS).then(storedRestaurants => {
         callback(null, storedRestaurants);
       }).catch(error => {
         callback(error, null);
@@ -419,8 +441,11 @@ class DBHelper {
    * @param {function} callback - Callback function.
    */
   static fetchRestaurantById(id, callback) {
-    fetch(`${DBHelper.DATABASE_URL}/${id}`).then(response => response.json()).then(restaruant => callback(null, restaruant)).catch(error => {
-      DBHelper.getStoredRestaurant(id).then(storedRestaurant => {
+    fetch(`${DBHelper.RESTAURANTS_URL}/${id}`).then(response => response.json()).then(restaurant => {
+      DBHelper.storeIndexedDB(IDB_RESTAURANTS, restaurant);
+      callback(null, restaurant);
+    }).catch(error => {
+      DBHelper.getStoredObjectById(IDB_RESTAURANTS, 'by-id', id).then(storedRestaurant => {
         callback(null, storedRestaurant);
       }).catch(error => {
         callback(error, null);
@@ -534,6 +559,116 @@ class DBHelper {
   }
 
   /**
+  * @description  Fetch all reviews.
+  * @constructor
+  * @param {function} callback - Callback function.
+  */
+  static fetchReviews(callback) {
+    fetch(DBHelper.REVIEWS_URL).then(response => response.json()).then(reviews => {
+      DBHelper.storeIndexedDB(IDB_REVIEWS, reviews);
+      callback(null, reviews);
+    }).catch(error => {
+      DBHelper.getStoredObjects(IDB_REVIEWS).then(storedReviews => {
+        callback(null, storedReviews);
+      }).catch(error => {
+        callback(error, null);
+      });
+    });
+  }
+
+  /**
+   * @description  Fetch a review by its ID.
+   * @constructor
+   * @param {int} id - Reviews identifier.
+   * @param {function} callback - Callback function.
+   */
+  static fetchReviewsById(id, callback) {
+    fetch(`${DBHelper.REVIEWS_URL}/${id}`).then(response => response.json()).then(review => {
+      DBHelper.storeIndexedDB(IDB_REVIEWS, review);
+      callback(null, review);
+    }).catch(error => {
+      DBHelper.getStoredObjectById(IDB_REVIEWS, 'by-id', id).then(storedReview => {
+        callback(null, storedReview);
+      }).catch(error => {
+        callback(error, null);
+      });
+    });
+  }
+
+  /**
+   * @description  Fetch all restaurant reviews by restaurant ID.
+   * @constructor
+   * @param {int} id - Restaurant identifier.
+   * @param {function} callback - Callback function.
+   */
+  static fetchReviewsByRestId(id, callback) {
+    fetch(`${DBHelper.REVIEWS_URL}/?restaurant_id=${id}`).then(response => response.json()).then(reviews => {
+      DBHelper.storeIndexedDB(IDB_REVIEWS, reviews);
+      callback(null, reviews);
+    }).catch(error => {
+      DBHelper.getStoredObjectById(IDB_REVIEWS, 'by-restaurant-id', id).then(storedReviews => {
+        callback(null, storedReviews);
+      }).catch(error => {
+        callback(error, null);
+      });
+    });
+  }
+
+  /**
+   * @description  Send review to server and stores it at database.
+   * @constructor
+   * @param {object} review - Reviwe object.
+   * @param {function} callback - Callback function.
+   */
+  static postReview(review, callback) {
+    fetch(DBHelper.REVIEWS_URL, {
+      method: 'post',
+      body: review
+    }).then(response => response.json()).then(review => {
+      DBHelper.storeIndexedDB(IDB_REVIEWS, review);
+      callback(null, review);
+    }).catch(error => {
+      callback(error, null);
+    });
+  }
+
+  /**
+   * @description  Send request favorite/unfavorite to server and changes at database.
+   * @constructor
+   * @param {int} id - Restaurant identifier.
+   * @param {boolean} favorite - True to mark as favorite, otherwise false.
+   * @param {function} callback - Callback function.
+   */
+  static putFavorite(id, favorite, callback) {
+    fetch(`${DBHelper.RESTAURANTS_URL}/${id}/?is_favorite=${favorite}`, {
+      method: 'put',
+      body: favorite
+    }).then(response => response.json()).then(favorite => {
+      DBHelper.storeIndexedDB(IDB_RESTAURANTS, favorite);
+      callback(null, favorite);
+    }).catch(error => {
+      callback(error, null);
+    });
+  }
+
+  /**
+   * @description  Send review to server and stores it at database.
+   * @constructor
+   * @param {object} review - Reviwe object.
+   * @param {function} callback - Callback function.
+   */
+  static postReview(review, callback) {
+    fetch(DBHelper.REVIEWS_URL, {
+      method: 'post',
+      body: review
+    }).then(response => response.json()).then(response => {
+      callback(null, response);
+    }).catch(error => {
+      callback(error, null);
+    });
+  }
+
+  /**
    * @description  Restaurant page URL.
    * @constructor
    * @param {object} restaurant - Restaurant information.
@@ -581,16 +716,16 @@ class DBHelper {
       });
     }
   }
-
 }
 module.exports = DBHelper;
 
 },{"idb":1}],3:[function(require,module,exports){
 const DBHelper = require('./dbhelper');
-
 let restaurants, neighborhoods, cuisines;
-var map;
-var markers = [];
+let map;
+let markers = [];
+let staticMap = false;
+let is_favorite;
 
 /**
   * @description Call functions when DOM content is loaded
@@ -603,6 +738,16 @@ document.addEventListener('DOMContentLoaded', event => {
   DBHelper.openIndexedDB();
   fetchNeighborhoods();
   fetchCuisines();
+});
+
+/**
+  * @description Call functions when window is resized
+  * @constructor
+  * @param {string} resize - String detected.
+  * @param {event} event - Event called
+  */
+window.addEventListener('resize', event => {
+  initMap();
 });
 
 /**
@@ -670,23 +815,6 @@ fillCuisinesHTML = (cuisines = self.cuisines) => {
     option.value = cuisine;
     select.append(option);
   });
-};
-
-/**
-* @description  Initialize Google map, called from HTML.
-* @constructor
-*/
-window.initMap = () => {
-  let loc = {
-    lat: 40.722216,
-    lng: -73.987501
-  };
-  self.map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 12,
-    center: loc,
-    scrollwheel: false
-  });
-  updateRestaurants();
 };
 
 /**
@@ -793,16 +921,127 @@ createRestaurantHTML = restaurant => {
   neighborhood.innerHTML = restaurant.neighborhood;
   li.append(neighborhood);
 
+  const favorite = document.createElement('div');
+  favorite.className = 'fav';
+  const link = document.createElement('a');
+  link.className = 'favorite';
+  link.setAttribute('role', 'button');
+  link.setAttribute('tabindex', '0');
+  eventListenerFavorite(link, restaurant.id);
+
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('class', 'svg-fav');
+  svg.setAttribute('viewBox', '0 0 576 512');
+  svg.setAttribute('aria-labelledby', `title-${restaurant.id} description-${restaurant.id}`);
+
+  const title = document.createElementNS('http://www.w3.org/2000/svg', "title");
+  title.setAttribute('id', `title-${restaurant.id}`);
+
+  const desc = document.createElementNS('http://www.w3.org/2000/svg', "desc");
+  desc.setAttribute('id', `description-${restaurant.id}`);
+  desc.innerHTML = 'Favorite image';
+
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('class', 'path-fav');
+  path.setAttribute('role', 'presentation');
+
+  self.is_favorite = restaurant.is_favorite == 'true' ? true : false;
+  if (self.is_favorite) {
+    link.title = 'Remove favorite';
+    link.setAttribute('aria-label', 'Remove favorite');
+    link.dataset.favorite = 'remove';
+    title.innerHTML = 'Remove favorite';
+    path.setAttribute("d", "M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z");
+  } else {
+    link.title = 'Add to favorite';
+    link.setAttribute('aria-label', 'Add to favorite');
+    link.dataset.favorite = 'add';
+    title.innerHTML = 'Add to favorite';
+    path.setAttribute("d", "M528.1 171.5L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6zM388.6 312.3l23.7 138.4L288 385.4l-124.3 65.3 23.7-138.4-100.6-98 139-20.2 62.2-126 62.2 126 139 20.2-100.6 98z");
+  }
+
+  svg.appendChild(title);
+  svg.appendChild(desc);
+  svg.appendChild(path);
+  link.append(svg);
+  favorite.append(link);
+  li.append(favorite);
+
   const address = document.createElement('p');
   address.innerHTML = restaurant.address;
   li.append(address);
 
   const more = document.createElement('a');
   more.innerHTML = 'View Details';
+  more.setAttribute('class', 'details');
   more.href = DBHelper.urlForRestaurant(restaurant);
   li.append(more);
 
   return li;
+};
+
+/**
+* @description  Depends of resolutions initalize image map or google map.
+* @constructor
+*/
+window.initMap = () => {
+  if (window.innerWidth < 641) {
+    var googleMap = document.getElementById('map');
+    googleMap.style.display = 'none';
+    displayStaticMap();
+    self.staticMap = true;
+  } else {
+    var imageMap = document.getElementById('static-map');
+    imageMap.style.display = 'none';
+    displayMap();
+    self.staticMap = false;
+  }
+};
+
+/**
+* @description  Initialize Google map, called from HTML.
+* @constructor
+*/
+displayMap = () => {
+  if (self.staticMap === false) {
+    return;
+  }
+  let googleMap = document.getElementById('map');
+  googleMap.style.display = 'block';
+  self.staticMap = false;
+
+  let loc = {
+    lat: 40.722216,
+    lng: -73.987501
+  };
+  self.map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 12,
+    center: loc,
+    scrollwheel: false
+  });
+  updateRestaurants();
+};
+
+/**
+* @description  Display Static map at Mobile resolutions.
+* @constructor
+*/
+displayStaticMap = () => {
+  if (self.staticMap === true) {
+    return;
+  }
+
+  let imageMap = document.getElementById('static-map');
+  imageMap.style.display = 'block';
+
+  imageMap.setAttribute('src', `https://maps.googleapis.com/maps/api/staticmap?center=40.722216,-73.987501&zoom=12&size=${window.innerWidth}x400&format=jpg&maptype=roadmap&markers=color:red`);
+  self.staticMap = true;
+
+  imageMap.addEventListener('click', function (e) {
+    e.preventDefault();
+    imageMap.style.display = 'none';
+    displayMap();
+  });
 };
 
 /**
@@ -818,6 +1057,44 @@ addMarkersToMap = (restaurants = self.restaurants) => {
       window.location.href = marker.url;
     });
     self.markers.push(marker);
+  });
+};
+
+/**
+ * @description Calls click event of favorite/unfavorite button.
+ * @constructor
+ * @param {integer} id - restaurant identifier.
+ * @param {object} link  - Link to add the event listener.
+ */
+eventListenerFavorite = (link, id) => {
+  link.addEventListener('click', function (e) {
+    event.preventDefault();
+    self.is_favorite = this.dataset.favorite == 'add' ? true : false;
+    DBHelper.putFavorite(id, self.is_favorite, (error, result) => {
+      if (!result) {
+        console.error(error);
+        return;
+      }
+      self.restaurants.forEach(restaurant => {
+        if (restaurant.id == id) {
+          restaurant.is_favorite = self.is_favorite ? 'true' : 'false';
+        }
+      });
+
+      if (self.is_favorite) {
+        link.title = 'Remove favorite';
+        link.setAttribute('aria-label', 'Remove favorite');
+        link.dataset.favorite = 'remove';
+        link.getElementsByTagName('title')[0].innerHTML = 'Remove favorite';
+        link.getElementsByTagName('path')[0].setAttribute("d", "M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z");
+      } else {
+        link.title = 'Add to favorite';
+        link.setAttribute('aria-label', 'Add to favorite');
+        link.dataset.favorite = 'add';
+        link.getElementsByTagName('title')[0].innerHTML = 'Add to favorite';
+        link.getElementsByTagName('path')[0].setAttribute("d", "M528.1 171.5L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6zM388.6 312.3l23.7 138.4L288 385.4l-124.3 65.3 23.7-138.4-100.6-98 139-20.2 62.2-126 62.2 126 139 20.2-100.6 98z");
+      }
+    });
   });
 };
 

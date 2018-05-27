@@ -1,6 +1,7 @@
 const idb = require('idb');
 const IDB_DB = 'restaurant-db';
-const IDB_OBJECT = 'restaurants';
+const IDB_RESTAURANTS = 'restaurants';
+const IDB_REVIEWS = 'reviews';
 
  /**
   * @description  Common database helper functions.
@@ -11,10 +12,19 @@ class DBHelper {
   * @description  Database URL. Change this to restaurants.json file location on your server.
   * @constructor
   */
-  static get DATABASE_URL() {
+  static get RESTAURANTS_URL() {
     const port = 1337 // Change this to your server port
     return `http://localhost:${port}/restaurants`;
   }
+
+  /**
+   * @description  Database URL. Change this to restaurants.json file location on your server.
+   * @constructor
+   */
+   static get REVIEWS_URL() {
+     const port = 1337 // Change this to your server port
+     return `http://localhost:${port}/reviews`;
+   }
 
 
   /**
@@ -32,10 +42,16 @@ class DBHelper {
       switch (upgradeDb.oldVersion) {
         case 0:
         case 1:
-          const store = upgradeDb.createObjectStore(IDB_OBJECT, {
+          const storeRestaurant = upgradeDb.createObjectStore(IDB_RESTAURANTS, {
             keyPath: 'id'
           });
-          store.createIndex('by-id', 'id');
+          storeRestaurant.createIndex('by-id', 'id', { unique: true });
+
+          const storeReviews = upgradeDb.createObjectStore(IDB_REVIEWS, {
+            keyPath: 'id'
+          });
+          storeReviews.createIndex('by-id', "id", { unique: true });
+          storeReviews.createIndex('by-restaurant-id', 'restaurant_id');
       }
     });
   }
@@ -44,44 +60,50 @@ class DBHelper {
   /**
    * @description  Save data restaurant.
    * @constructor
-   * @param {object} restaurant - Restaurant object.
+   * @param {object} Object list - Object like restaurant, reveiw, ...
    */
-  static storeIndexedDB(restaurants) {
+  static storeIndexedDB(table, objects) {
     this.dbPromise.then(function (db) {
       if(!db) return;
-      let tx = db.transaction(IDB_OBJECT, 'readwrite');
-      const store = tx.objectStore(IDB_OBJECT);
-      restaurants.forEach(function(restaurant){
-        store.put(restaurant);
-      });
+
+      let tx = db.transaction(table, 'readwrite');
+      const store = tx.objectStore(table);
+      if (Array.isArray(objects)) {
+        objects.forEach(function(object){
+          store.put(object);
+        });
+      } else {
+        store.put(objects);
+      }
     });
   }
 
 
   /**
-   * @description  Get all restaurants from indexedDB.
+   * @description  Get a collection of objects from indexedDB.
    * @constructor
    */
-  static getStoredRestaurants() {
+  static getStoredObjects(table) {
     return this.dbPromise.then(function(db) {
       if(!db) return;
-      const store = db.transaction(IDB_OBJECT).objectStore(IDB_OBJECT);
+      const store = db.transaction(table).objectStore(table);
       return store.getAll();
     })
   }
 
 
   /**
-   * @description  Get all restaurants from indexedDB.
-   * @constructor
+   * @description  Get object from indexedDB by index
+   * @constructor {int} id - Restaurant id
    */
-  static getStoredRestaurant(id) {
+  static getStoredObjectById(table, idx, id) {
     return this.dbPromise.then(function(db) {
       if(!db) return;
-      const store = db.transaction(IDB_OBJECT).objectStore(IDB_OBJECT);
-      const indexId = store.index('id');
+
+      const store = db.transaction(table).objectStore(table);
+      const indexId = store.index(idx);
       return indexId.getAll(id);
-    })
+    });
   }
 
 
@@ -91,14 +113,14 @@ class DBHelper {
   * @param {function} callback - Callback function.
   */
   static fetchRestaurants(callback) {
-    fetch(DBHelper.DATABASE_URL)
+    fetch(DBHelper.RESTAURANTS_URL)
       .then(response => response.json())
       .then(restaurants => {
-        DBHelper.storeIndexedDB(restaurants);
+        DBHelper.storeIndexedDB(IDB_RESTAURANTS, restaurants);
         callback(null, restaurants);
       })
       .catch(error => {
-        DBHelper.getStoredRestaurants()
+        DBHelper.getStoredObjects(IDB_RESTAURANTS)
         .then((storedRestaurants) => {
           callback(null, storedRestaurants);
         }).catch(error => {
@@ -115,11 +137,14 @@ class DBHelper {
   * @param {function} callback - Callback function.
   */
   static fetchRestaurantById(id, callback) {
-    fetch(`${DBHelper.DATABASE_URL}/${id}`)
+    fetch(`${DBHelper.RESTAURANTS_URL}/${id}`)
       .then(response => response.json())
-      .then(restaruant => callback(null, restaruant))
+      .then(restaurant => {
+        DBHelper.storeIndexedDB(IDB_RESTAURANTS, restaurant);
+        callback(null, restaurant);
+      })
       .catch(error => {
-        DBHelper.getStoredRestaurant(id)
+        DBHelper.getStoredObjectById(IDB_RESTAURANTS, 'by-id' ,id)
         .then((storedRestaurant) => {
           callback(null, storedRestaurant);
         }).catch(error => {
@@ -237,6 +262,147 @@ class DBHelper {
   }
 
 
+
+  /**
+  * @description  Fetch all reviews.
+  * @constructor
+  * @param {function} callback - Callback function.
+  */
+  static fetchReviews(callback) {
+    fetch(DBHelper.REVIEWS_URL)
+      .then(response => response.json())
+      .then(reviews => {
+        DBHelper.storeIndexedDB(IDB_REVIEWS, reviews);
+        callback(null, reviews);
+      })
+      .catch(error => {
+        DBHelper.getStoredObjects(IDB_REVIEWS)
+        .then((storedReviews) => {
+          callback(null, storedReviews);
+        }).catch(error => {
+          callback(error, null);
+        })
+      });
+  }
+
+
+  /**
+   * @description  Fetch a review by its ID.
+   * @constructor
+   * @param {int} id - Reviews identifier.
+   * @param {function} callback - Callback function.
+   */
+   static fetchReviewsById(id, callback) {
+     fetch(`${DBHelper.REVIEWS_URL}/${id}`)
+       .then(response => response.json())
+       .then(review => {
+         DBHelper.storeIndexedDB(IDB_REVIEWS, review);
+         callback(null, review)
+       })
+       .catch(error => {
+         DBHelper.getStoredObjectById(IDB_REVIEWS, 'by-id', id)
+         .then((storedReview) => {
+           callback(null, storedReview);
+         }).catch(error => {
+           callback(error, null);
+         })
+       });
+   }
+
+
+ /**
+  * @description  Fetch all restaurant reviews by restaurant ID.
+  * @constructor
+  * @param {int} id - Restaurant identifier.
+  * @param {function} callback - Callback function.
+  */
+  static fetchReviewsByRestId(id, callback) {
+    fetch(`${DBHelper.REVIEWS_URL}/?restaurant_id=${id}`)
+      .then(response => response.json())
+      .then(reviews => {
+        DBHelper.storeIndexedDB(IDB_REVIEWS, reviews);
+        callback(null, reviews)
+      })
+      .catch(error => {
+        DBHelper.getStoredObjectById(IDB_REVIEWS, 'by-restaurant-id', id)
+        .then((storedReviews) => {
+          callback(null, storedReviews);
+        }).catch(error => {
+          callback(error, null);
+        })
+      });
+  }
+
+
+  /**
+   * @description  Send review to server and stores it at database.
+   * @constructor
+   * @param {object} review - Reviwe object.
+   * @param {function} callback - Callback function.
+   */
+  static postReview(review, callback) {
+    fetch(DBHelper.REVIEWS_URL,
+      {
+        method:'post',
+        body:review
+      })
+      .then(response => response.json())
+      .then(review => {
+        DBHelper.storeIndexedDB(IDB_REVIEWS, review);
+        callback(null, review);
+      })
+      .catch(error => {
+        callback(error, null);
+      });
+  }
+
+
+  /**
+   * @description  Send request favorite/unfavorite to server and changes at database.
+   * @constructor
+   * @param {int} id - Restaurant identifier.
+   * @param {boolean} favorite - True to mark as favorite, otherwise false.
+   * @param {function} callback - Callback function.
+   */
+  static putFavorite(id, favorite, callback) {
+    fetch(`${DBHelper.RESTAURANTS_URL}/${id}/?is_favorite=${favorite}`,
+      {
+        method:'put',
+        body:favorite
+      })
+      .then(response => response.json())
+      .then(favorite => {
+        DBHelper.storeIndexedDB(IDB_RESTAURANTS, favorite);        
+        callback(null, favorite);
+      })
+      .catch(error => {
+        callback(error, null);
+      });
+  }
+
+
+  /**
+   * @description  Send review to server and stores it at database.
+   * @constructor
+   * @param {object} review - Reviwe object.
+   * @param {function} callback - Callback function.
+   */
+  static postReview(review, callback) {
+    fetch(DBHelper.REVIEWS_URL,
+      {
+        method:'post',
+        body:review
+      })
+      .then(response => response.json())
+      .then(response => {
+        callback(null, response);
+      })
+      .catch(error => {
+        callback(error, null);
+      });
+  }
+
+
  /**
   * @description  Restaurant page URL.
   * @constructor
@@ -290,8 +456,5 @@ class DBHelper {
         });
     }
   }
-
-
-
 }
 module.exports = DBHelper;

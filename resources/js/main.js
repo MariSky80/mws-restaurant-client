@@ -1,10 +1,11 @@
 const DBHelper = require('./dbhelper');
-
 let restaurants,
   neighborhoods,
-  cuisines
-var map
-var markers = []
+  cuisines;
+let map;
+let markers = [];
+let staticMap = false;
+let is_favorite;
 
 /**
   * @description Call functions when DOM content is loaded
@@ -17,6 +18,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
   DBHelper.openIndexedDB();
   fetchNeighborhoods();
   fetchCuisines();
+});
+
+
+/**
+  * @description Call functions when window is resized
+  * @constructor
+  * @param {string} resize - String detected.
+  * @param {event} event - Event called
+  */
+window.addEventListener('resize', (event) =>{
+  initMap();
 });
 
 
@@ -86,24 +98,6 @@ fillCuisinesHTML = (cuisines = self.cuisines) => {
     option.value = cuisine;
     select.append(option);
   });
-}
-
-
-/**
-* @description  Initialize Google map, called from HTML.
-* @constructor
-*/
-window.initMap = () => {
-  let loc = {
-    lat: 40.722216,
-    lng: -73.987501
-  };
-  self.map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 12,
-    center: loc,
-    scrollwheel: false
-  });
-  updateRestaurants();
 }
 
 
@@ -191,7 +185,6 @@ createRestaurantHTML = (restaurant) => {
   sourceMedium.setAttribute('srcset', `${img}-512_medium.jpg`);
   picture.append(sourceMedium);
 
-
   const sourceLarge = document.createElement('source');
   sourceLarge.setAttribute('media', '(min-width:961px)');
   sourceLarge.setAttribute('srcset', `${img}-800_large.jpg`);
@@ -216,16 +209,130 @@ createRestaurantHTML = (restaurant) => {
   neighborhood.innerHTML = restaurant.neighborhood;
   li.append(neighborhood);
 
+  const favorite = document.createElement('div');
+  favorite.className = 'fav';
+  const link = document.createElement('a');
+  link.className = 'favorite';
+  link.setAttribute('role', 'button');
+  link.setAttribute('tabindex', '0');
+  eventListenerFavorite(link, restaurant.id);
+
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('class','svg-fav');
+  svg.setAttribute('viewBox','0 0 576 512');
+  svg.setAttribute('aria-labelledby', `title-${restaurant.id} description-${restaurant.id}`);
+
+  const title = document.createElementNS('http://www.w3.org/2000/svg', "title");
+  title.setAttribute('id', `title-${restaurant.id}`);
+
+  const desc = document.createElementNS('http://www.w3.org/2000/svg', "desc");
+  desc.setAttribute('id', `description-${restaurant.id}`);
+  desc.innerHTML = 'Favorite image';
+
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('class','path-fav');
+  path.setAttribute('role','presentation');
+
+  self.is_favorite = (restaurant.is_favorite == 'true') ? true : false;
+  if( self.is_favorite ) {
+    link.title = 'Remove favorite';
+    link.setAttribute('aria-label', 'Remove favorite');
+    link.dataset.favorite = 'remove';
+    title.innerHTML = 'Remove favorite';
+    path.setAttribute("d","M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z");
+  } else {
+    link.title = 'Add to favorite';
+    link.setAttribute('aria-label', 'Add to favorite');
+    link.dataset.favorite = 'add';
+    title.innerHTML = 'Add to favorite';
+    path.setAttribute("d","M528.1 171.5L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6zM388.6 312.3l23.7 138.4L288 385.4l-124.3 65.3 23.7-138.4-100.6-98 139-20.2 62.2-126 62.2 126 139 20.2-100.6 98z");
+  }
+
+  svg.appendChild(title);
+  svg.appendChild(desc);
+  svg.appendChild(path);
+  link.append(svg);
+  favorite.append(link);
+  li.append(favorite);
+
   const address = document.createElement('p');
   address.innerHTML = restaurant.address;
   li.append(address);
 
   const more = document.createElement('a');
   more.innerHTML = 'View Details';
+  more.setAttribute('class', 'details');
   more.href = DBHelper.urlForRestaurant(restaurant);
   li.append(more)
 
   return li
+}
+
+
+/**
+* @description  Depends of resolutions initalize image map or google map.
+* @constructor
+*/
+window.initMap = () => {
+  if(window.innerWidth < 641) {
+    var googleMap = document.getElementById('map');
+    googleMap.style.display = 'none';
+    displayStaticMap();
+    self.staticMap = true;
+  } else {
+    var imageMap = document.getElementById('static-map');
+    imageMap.style.display = 'none';
+    displayMap();
+    self.staticMap = false;
+  }
+}
+
+
+/**
+* @description  Initialize Google map, called from HTML.
+* @constructor
+*/
+displayMap = () => {
+  if(self.staticMap === false) {
+    return;
+  }
+  let googleMap = document.getElementById('map');
+  googleMap.style.display = 'block';
+  self.staticMap = false;
+
+  let loc = {
+    lat: 40.722216,
+    lng: -73.987501
+  }
+  self.map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 12,
+    center: loc,
+    scrollwheel: false
+  });
+  updateRestaurants();
+}
+
+
+/**
+* @description  Display Static map at Mobile resolutions.
+* @constructor
+*/
+displayStaticMap = () => {
+  if(self.staticMap === true) {
+    return;
+  }
+
+  let imageMap = document.getElementById('static-map');
+  imageMap.style.display = 'block';
+
+  imageMap.setAttribute('src',`https://maps.googleapis.com/maps/api/staticmap?center=40.722216,-73.987501&zoom=12&size=${window.innerWidth}x400&format=jpg&maptype=roadmap&markers=color:red`);
+  self.staticMap = true;
+
+  imageMap.addEventListener('click',function(e) {
+    e.preventDefault();
+    imageMap.style.display ='none';
+    displayMap();
+  });
 }
 
 
@@ -244,3 +351,42 @@ addMarkersToMap = (restaurants = self.restaurants) => {
     self.markers.push(marker);
   });
 }
+
+
+/**
+ * @description Calls click event of favorite/unfavorite button.
+ * @constructor
+ * @param {integer} id - restaurant identifier.
+ * @param {object} link  - Link to add the event listener.
+ */
+ eventListenerFavorite = (link, id) => {
+   link.addEventListener('click', function(e) {
+     event.preventDefault();
+     self.is_favorite = (this.dataset.favorite == 'add') ? true : false;
+     DBHelper.putFavorite(id, self.is_favorite, (error, result) => {
+       if (!result) {
+         console.error(error);
+         return;
+       }
+       self.restaurants.forEach(restaurant => {
+         if( restaurant.id == id ) {
+           restaurant.is_favorite = self.is_favorite ? 'true' : 'false';
+         }
+       });
+
+       if( self.is_favorite ) {
+         link.title = 'Remove favorite';
+         link.setAttribute('aria-label', 'Remove favorite');
+         link.dataset.favorite = 'remove';
+         link.getElementsByTagName('title')[0].innerHTML = 'Remove favorite';
+         link.getElementsByTagName('path')[0].setAttribute("d","M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z");
+       } else {
+         link.title = 'Add to favorite';
+         link.setAttribute('aria-label', 'Add to favorite');
+         link.dataset.favorite = 'add';
+         link.getElementsByTagName('title')[0].innerHTML = 'Add to favorite';
+         link.getElementsByTagName('path')[0].setAttribute("d","M528.1 171.5L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6zM388.6 312.3l23.7 138.4L288 385.4l-124.3 65.3 23.7-138.4-100.6-98 139-20.2 62.2-126 62.2 126 139 20.2-100.6 98z");
+       }
+     });
+   });
+ }

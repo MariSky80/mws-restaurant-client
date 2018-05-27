@@ -62,6 +62,10 @@
         <!-- Beginning map -->
         <section id="map-container" aria-hidden="true" aria-label="Google maps">
           <div id="map" role="application"></div>
+          <img id="static-map" tabindex="0" role="application"
+            aria-label="Click to active interactive Google maps"
+            alt="Click to active interactive Google maps"
+            src="">
         </section>
         <!-- End map -->
         <!-- Beginning restaurant -->
@@ -72,6 +76,7 @@
           </picture>
           <p id="restaurant-cuisine"></p>
           <p id="restaurant-address"></p>
+          <div id="favorite"></div>
           <table id="restaurant-hours"></table>
         </section>
         <!-- end restaurant -->
@@ -80,6 +85,28 @@
           <ul id="reviews-list"></ul>
         </section>
         <!-- End reviews -->
+        <!-- Review form -->
+        <section id="review-form-container" aria-label="Reviews form">
+          <h3 tabindex="0">Add a new Review</h3>
+          <form action="" id="review-form">
+            <input id="name" type="text" placeholder="Name" aria-label="Review Name">
+            <select name="rating" id="rating" aria-label="Review rating">
+              <option value="" disabled selected>Rating</option>
+              <option value="5">5. Very Good</option>
+              <option value="4">4. Good</option>
+              <option value="3">3. Fine</option>
+              <option value="2">2. Bad</option>
+              <option value="1">1. Very Bad</option>
+            </select>
+            <textarea id="review" name="review" cols="40" rows="10" placeholder="Write your review here" aria-label="Review"></textarea>
+            <div id="alert" class="alert" arial-label="Error alert" aria-live="assertive" role="alert"></div>
+            <div id="success" class="success" arial-label="Success" aria-live="assertive" role="alert">
+              <p>Your review has been successfully submitted.</p>
+            </div>
+            <button id="submit" type="submit" aria-label="Button submit review">Submit</button>
+          </form>
+        </section>
+        <!-- End review form -->
       </div>
     </main>
     <!-- End main -->
@@ -96,9 +123,8 @@
     <!-- Service worker javascript file -->
     <script src="sw.js"></script>
     <!-- Google Maps -->
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCtvz3BAT5-XChlZ_dhuW3GAglJeHk_2Os&libraries=places&callback=initMap"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places&callback=initMap&key=AIzaSyCtvz3BAT5-XChlZ_dhuW3GAglJeHk_2Os"></script>
     <!-- End scripts -->
-
   </body>
 
 </html>
