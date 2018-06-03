@@ -1,7 +1,10 @@
 const idb = require('idb');
 const IDB_DB = 'restaurant-db';
 const IDB_RESTAURANTS = 'restaurants';
+const IDB_PENDING_RESTAURANTS = 'pending_restaurants';
 const IDB_REVIEWS = 'reviews';
+const IDB_PENDING_REVIEWS = 'pending_reviews';
+let tagName = '';
 
  /**
   * @description  Common database helper functions.
@@ -38,10 +41,11 @@ class DBHelper {
       return Promise.resolve();
     }
 
-    this.dbPromise = idb.open(IDB_DB, 1, function (upgradeDb) {
+    this.dbPromise = idb.open(IDB_DB, 2, function (upgradeDb) {
       switch (upgradeDb.oldVersion) {
         case 0:
         case 1:
+        case 2:
           const storeRestaurant = upgradeDb.createObjectStore(IDB_RESTAURANTS, {
             keyPath: 'id'
           });
@@ -50,8 +54,18 @@ class DBHelper {
           const storeReviews = upgradeDb.createObjectStore(IDB_REVIEWS, {
             keyPath: 'id'
           });
-          storeReviews.createIndex('by-id', "id", { unique: true });
+          storeReviews.createIndex('by-id', 'id', { unique: true });
           storeReviews.createIndex('by-restaurant-id', 'restaurant_id');
+
+          const pendingRestaurants = upgradeDb.createObjectStore(IDB_PENDING_RESTAURANTS, {
+            keyPath: 'id'
+          });
+          pendingRestaurants.createIndex('by-id', 'id', {unique:true});
+
+          const pendingReviews = upgradeDb.createObjectStore(IDB_PENDING_REVIEWS, {
+            keyPath:'id', autoIncrement:true
+          });
+          pendingReviews.createIndex('by-id', 'id', {unique:true});
       }
     });
   }
@@ -352,7 +366,11 @@ class DBHelper {
         callback(null, review);
       })
       .catch(error => {
-        callback(error, null);
+        //Error sending review to server.
+        DBHelper.tagName = 'review';
+        DBHelper.addSyncServiceWorker();
+        DBHelper.storeIndexedDB(IDB_PENDING_REVIEWS, JSON.parse(review));
+        callback(null, review);
       });
   }
 
@@ -372,33 +390,12 @@ class DBHelper {
       })
       .then(response => response.json())
       .then(favorite => {
-        DBHelper.storeIndexedDB(IDB_RESTAURANTS, favorite);        
+        DBHelper.storeIndexedDB(IDB_RESTAURANTS, favorite);
         callback(null, favorite);
       })
       .catch(error => {
-        callback(error, null);
-      });
-  }
-
-
-  /**
-   * @description  Send review to server and stores it at database.
-   * @constructor
-   * @param {object} review - Reviwe object.
-   * @param {function} callback - Callback function.
-   */
-  static postReview(review, callback) {
-    fetch(DBHelper.REVIEWS_URL,
-      {
-        method:'post',
-        body:review
-      })
-      .then(response => response.json())
-      .then(response => {
-        callback(null, response);
-      })
-      .catch(error => {
-        callback(error, null);
+        //Error sending favorite/unfavorite to server.
+        callback(null, favorite);
       });
   }
 
@@ -456,5 +453,39 @@ class DBHelper {
         });
     }
   }
+
+  /**
+   * @description Register ServiceWorker.
+   * @constructor
+   */
+   static addSyncServiceWorker() {
+     navigator.serviceWorker.ready.then(function(registration) {
+       registration.sync.register(DBHelper.tagName).then(function() {
+         console.log(`Registration ${DBHelper.tagName} succeeded.`);
+       }, function() {
+         console.error(`Registration ${DBHelper.tagName} failed!`);
+       });
+     });
+   }
+
+
+  /**
+    * @description Show or hide message when Service Worker is online o offline.
+    * @constructor
+    * @param {string} offline - String detected.
+    * @param {event} event - Event called
+    */
+    static showMessage(type) {
+      let message = document.getElementById('sw-message');
+      switch(type) {
+        case 'online':
+          message.style.display = 'none';
+          break;
+        case 'offline':
+          message.style.display = 'block';
+          break;
+      }
+    }
+
 }
 module.exports = DBHelper;

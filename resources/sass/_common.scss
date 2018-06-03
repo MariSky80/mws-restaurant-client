@@ -32,6 +32,17 @@ footer {
   background-color: $cbg-footer;
 }
 
+#sw-message {
+  padding: 1em;
+  width: 100%;
+  bottom: 0;
+  position: fixed;
+  display: none;
+  background-color: $cbg-sw;
+  opacity: 0.95;
+  color: $cf-sw;
+}
+
 a,
 a:hover,
 a:visited,

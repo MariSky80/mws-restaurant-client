@@ -17,7 +17,8 @@
   },
   "homepage": "https://github.com/MariSky80/mws-restaurant-client#readme",
   "dependencies": {
-    "grunt-responsive-images": "^1.10.1"
+    "grunt-responsive-images": "^1.10.1",
+    "gulp-minify": "^2.1.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
@@ -28,6 +29,7 @@
     "grunt-mkdir": "^1.0.0",
     "gulp": "^3.9.1",
     "gulp-grunt": "^0.5.5",
+    "gulp-htmlmin": "^4.0.0",
     "gulp-load-plugins": "^1.5.0",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^4.0.1",

@@ -33,6 +33,30 @@ window.addEventListener('resize', (event) =>{
 
 
 /**
+  * @description Call functions when service worker is online.
+  * @constructor
+  * @param {string} online - String detected.
+  * @param {event} event - Event called
+  */
+ window.addEventListener('online',(event)=>{
+   event.preventDefault();
+   DBHelper.showMessage(event.type);
+ });
+
+
+ /**
+   * @description Call functions when service worker is offline.
+   * @constructor
+   * @param {string} offline - String detected.
+   * @param {event} event - Event called
+   */
+ window.addEventListener('offline',(event)=>{
+   event.preventDefault();
+   DBHelper.showMessage(event.type);
+ });
+
+
+/**
  * @description  Fetch all neighborhoods and set their HTML.
  * @constructor
  * @param {object} error - error object.

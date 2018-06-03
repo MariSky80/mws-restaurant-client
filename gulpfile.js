@@ -10,10 +10,12 @@ const babelify = require('babelify');
 const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
 const mergeStream = require('merge-stream');
+const minify = require('gulp-minify');
+const htmlmin = require('gulp-htmlmin');
 
 
 //Execute by default.
-gulp.task('default', ['sass', 'copy', 'js', 'grunt-create', 'watch']);
+gulp.task('default', ['sass', 'js', 'grunt-create', 'copy', 'watch']);
 
 //WATCH
 gulp.task('watch', function () {
@@ -38,10 +40,11 @@ gulp.task('clean', function (done) {
 gulp.task('copy', function () {
   return mergeStream(
     gulp.src('resources/img/favicon/*.*').pipe(gulp.dest('dist/img/favicon/')),
-    gulp.src('resources/*.html').pipe(gulp.dest('dist/')),
-    gulp.src('resources/sw.js').pipe(gulp.dest('dist/')),
     gulp.src('resources/manifest.json').pipe(gulp.dest('dist/')),
     gulp.src('resources/browserconfig.xml').pipe(gulp.dest('dist/')),
+    gulp.src('resources/*.html')
+        .pipe(htmlmin({collapseWhitespace: true}))
+        .pipe(gulp.dest('dist/'))
   );
 });
 
@@ -91,12 +94,19 @@ function bundle(b, outputPath) {
     .pipe(plugins.sourcemaps.init({loadMaps: true})) // loads map from browserify file
        // Add transformation tasks to the pipeline here.
     .pipe(plugins.sourcemaps.write('./')) // writes .map file
+    .pipe(minify({
+        ext:{
+            src:'-debug.js',
+            min:'.js'
+        }
+    }))
     .pipe(gulp.dest(`dist/${outputDir}/`));
 }
 
 var jsBundles = {
   'js/bundle_main.js': createBundle('resources/js/main.js'),
-  'js/bundle_restaurant.js': createBundle('resources/js/restaurant_info.js')
+  'js/bundle_restaurant.js': createBundle('resources/js/restaurant_info.js'),
+  'sw.js': createBundle('sw.js'),
 };
 
 gulp.task('js', function () {
