@@ -367,7 +367,7 @@ class DBHelper {
           const storeReviews = upgradeDb.createObjectStore(IDB_REVIEWS, {
             keyPath: 'id'
           });
-          storeReviews.createIndex('by-id', 'id', { unique: true });
+          //storeReviews.createIndex('by-id', 'id', { unique: true });
           storeReviews.createIndex('by-restaurant-id', 'restaurant_id');
 
           const pendingRestaurants = upgradeDb.createObjectStore(IDB_PENDING_RESTAURANTS, {
@@ -645,6 +645,7 @@ class DBHelper {
       //Error sending review to server.
       DBHelper.tagName = 'review';
       DBHelper.addSyncServiceWorker();
+      DBHelper.storeIndexedDB(IDB_REVIEWS, review);
       DBHelper.storeIndexedDB(IDB_PENDING_REVIEWS, JSON.parse(review));
       callback(null, review);
     });
@@ -666,6 +667,10 @@ class DBHelper {
       callback(null, favorite);
     }).catch(error => {
       //Error sending favorite/unfavorite to server.
+      DBHelper.tagName = 'favorite';
+      DBHelper.addSyncServiceWorker();
+      DBHelper.storeIndexedDB(IDB_RESTAURANTS, favorite);
+      DBHelper.storeIndexedDB(IDB_PENDING_RESTAURANTS, JSON.parse(favorite));
       callback(null, favorite);
     });
   }
@@ -686,7 +691,7 @@ class DBHelper {
    */
   static imageUrlForRestaurant(restaurant) {
     let photograph = 'photograph' in restaurant ? restaurant.photograph : restaurant.id;
-    return `/dist/img/${photograph}`;
+    return `./img/${photograph}`;
   }
 
   /**
@@ -1241,7 +1246,6 @@ eventListenerFavorite = link => {
     DBHelper.putFavorite(self.restaurant.id, self.is_favorite, (error, result) => {
       if (!result) {
         console.error(error);
-        return;
       }
       self.restaurant.is_favorite = self.is_favorite ? 'true' : 'false';
       if (self.is_favorite) {

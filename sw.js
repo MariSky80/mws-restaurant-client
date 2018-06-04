@@ -18,7 +18,7 @@ const dbPromise = idb.open(IDB_DB, 2, function (upgradeDb) {
       const storeReviews = upgradeDb.createObjectStore(IDB_REVIEWS, {
         keyPath: 'id'
       });
-      storeReviews.createIndex('by-id', 'id', { unique: true });
+      //storeReviews.createIndex('by-id', 'id', { unique: true });
       storeReviews.createIndex('by-restaurant-id', 'restaurant_id');
 
       const pendingRestaurants = upgradeDb.createObjectStore(IDB_PENDING_RESTAURANTS, {
@@ -143,6 +143,8 @@ self.addEventListener('sync', function(event) {
   switch(event.tag) {
     case 'review':  event.waitUntil(sendAllReviews());
       break;
+    case 'favorite': event.waitUntil(sendAllFavorites());
+      break;
   }
 });
 
@@ -165,6 +167,27 @@ function postReview(review) {
     })
     .then(response => response.json())
     .then(review => console.log(review));
+}
+
+
+/**
+ * @description  Send review to server and stores it at database.
+ * @constructor
+ * @param {object} review - Reviwe object.
+ * @param {function} callback - Callback function.
+ */
+function putFavorite(favorite) {
+  return fetch(`http://localhost:1337/restaurants/${favorite.restaurant_id}/?is_favorite=${favorite.is_favorite}`,
+    {
+      method:'put',
+      headers: {
+        Accept: "application/json, text/plain, */*",
+        "Content-Type": "application/json"
+      },
+      body:JSON.stringify(favorite)
+    })
+    .then(response => response.json())
+    .then(favorite => console.log(favorite));
 }
 
 
@@ -219,22 +242,14 @@ function sendAllFavorites() {
              .objectStore(IDB_PENDING_RESTAURANTS)
              .getAll();
   })
-  .then(reviews => {
-    const reviewList = [];
-    reviews.forEach(function(review) {
-      let rev = {
-        'restaurant_id': review.restaurant_id,
-        'name': review.name,
-        'rating': review.rating,
-        'comments': review.comments,
-        'createdAt': review.createdAt,
-        'updatedAt': review.updatedAt
-      };
-      reviewList.push(putFavorite(rev));
+  .then(favorites => {
+    const favoriteList = [];
+    favorites.forEach(function(favorite) {
+      favoriteList.push(putFavorite(favorite));
     });
-    return Promise.all(reviewList);
+    return Promise.all(favoriteList);
   })
-  .then(reviews => {
+  .then(favorites => {
     dbPromise.then( db => {
       if(!db) return;
       const clear = db.transaction(IDB_PENDING_RESTAURANTS, "readwrite");

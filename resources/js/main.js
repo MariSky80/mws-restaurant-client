@@ -390,7 +390,6 @@ addMarkersToMap = (restaurants = self.restaurants) => {
      DBHelper.putFavorite(id, self.is_favorite, (error, result) => {
        if (!result) {
          console.error(error);
-         return;
        }
        self.restaurants.forEach(restaurant => {
          if( restaurant.id == id ) {

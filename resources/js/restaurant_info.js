@@ -500,7 +500,6 @@ eventListenerFavorite = (link) => {
     DBHelper.putFavorite(self.restaurant.id, self.is_favorite, (error, result) => {
       if (!result) {
         console.error(error);
-        return;
       }
       self.restaurant.is_favorite = self.is_favorite ? 'true' : 'false';
       if( self.is_favorite ) {
